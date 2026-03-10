@@ -49,12 +49,12 @@ export function Header({ siteName = 'Matthew O\'Connor', links = [], variant = '
       <nav
         className={
           isSticky
-            ? 'mx-auto flex h-12 max-w-sm items-center justify-center gap-1 rounded-full bg-foreground px-2 shadow-lg sm:h-14 sm:gap-2'
+            ? 'mx-auto flex h-12 items-center justify-center rounded-full bg-foreground px-1.5 shadow-lg sm:h-14'
             : 'flex h-12 items-center justify-center rounded-full bg-foreground px-5 shadow-lg sm:h-14'
         }
         style={
           isSticky
-            ? undefined
+            ? { width: 'fit-content' }
             : { animation: 'nav-in 0.5s ease-out both', width: 'fit-content' }
         }
       >
@@ -183,7 +183,7 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
   }, [mounted, links, setActiveIndex])
 
   return (
-    <div ref={containerRef} className="relative flex items-center gap-0.5 sm:gap-1">
+    <div ref={containerRef} className="relative flex items-center">
       {/* Sliding pill indicator */}
       <div
         className="absolute top-0 h-full rounded-full bg-white/[0.12]"
@@ -203,7 +203,7 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
           ref={(el) => { linkRefs.current[i] = el }}
           href={resolveUrl(link.url)}
           onClick={(e) => onLinkClick(e, link.url, i)}
-          className={`relative z-10 rounded-full px-3 py-1.5 text-xs transition-colors duration-200 sm:px-4 sm:text-sm ${
+          className={`relative z-10 rounded-full px-4 py-1.5 text-xs transition-colors duration-200 sm:px-5 sm:text-sm ${
             i === activeIndex
               ? 'text-background'
               : 'text-background/50 hover:text-background/75'
