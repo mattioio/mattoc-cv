@@ -102,6 +102,27 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const [pill, setPill] = useState({ left: 0, width: 0, ready: false })
 
+  // Suppress scroll spy while a click-triggered smooth scroll is in progress
+  const scrollLockRef = useRef(false)
+  const scrollLockTimer = useRef<ReturnType<typeof setTimeout>>()
+
+  const lockScrollSpy = useCallback(() => {
+    scrollLockRef.current = true
+    clearTimeout(scrollLockTimer.current)
+    scrollLockTimer.current = setTimeout(() => {
+      scrollLockRef.current = false
+    }, 900)
+  }, [])
+
+  // Wrap the parent handleClick to also lock scroll spy
+  const onLinkClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, url: string, index: number) => {
+      lockScrollSpy()
+      handleClick(e, url, index)
+    },
+    [handleClick, lockScrollSpy],
+  )
+
   // Measure the active link and update the pill position
   const updatePill = useCallback(() => {
     const link = linkRefs.current[activeIndex]
@@ -144,6 +165,9 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
 
     const observer = new IntersectionObserver(
       (entries) => {
+        // Ignore observations while smooth-scrolling from a click
+        if (scrollLockRef.current) return
+
         for (const entry of entries) {
           if (entry.isIntersecting) {
             const idx = sectionIds.indexOf(entry.target.id)
@@ -178,7 +202,7 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
           key={i}
           ref={(el) => { linkRefs.current[i] = el }}
           href={resolveUrl(link.url)}
-          onClick={(e) => handleClick(e, link.url, i)}
+          onClick={(e) => onLinkClick(e, link.url, i)}
           className={`relative z-10 rounded-full px-3 py-1.5 text-xs transition-colors duration-200 sm:px-4 sm:text-sm ${
             i === activeIndex
               ? 'text-background'
