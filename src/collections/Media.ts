@@ -1,3 +1,4 @@
+import path from 'path'
 import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
@@ -8,7 +9,11 @@ export const Media: CollectionConfig = {
   admin: {
     useAsTitle: 'filename',
   },
-  upload: true,
+  upload: {
+    staticDir: process.env.BLOB_READ_WRITE_TOKEN
+      ? path.resolve('/tmp/media')
+      : path.resolve('media'),
+  },
   fields: [
     {
       name: 'alt',
