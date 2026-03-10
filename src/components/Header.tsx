@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -13,13 +13,16 @@ type HeaderProps = {
 export function Header({ siteName = 'Matthew O\'Connor', links = [], variant = 'fixed' }: HeaderProps) {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+
   useEffect(() => setMounted(true), [])
 
   // Layout header hides on homepage (homepage renders its own sticky variant)
   // Also hide before hydration to prevent flash on homepage
   if (variant === 'fixed' && (!mounted || pathname === '/')) return null
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string, index: number) => {
+    setActiveIndex(index)
     if (url.startsWith('#') && pathname === '/') {
       e.preventDefault()
       const el = document.querySelector(url)
@@ -69,20 +72,122 @@ export function Header({ siteName = 'Matthew O\'Connor', links = [], variant = '
         )}
 
         {isSticky && (
-          <div className="flex items-center gap-0.5 sm:gap-1">
-            {links.map((link, i) => (
-              <Link
-                key={i}
-                href={resolveUrl(link.url)}
-                onClick={(e) => handleClick(e, link.url)}
-                className="rounded-full px-3 py-1.5 text-xs text-background/70 transition-colors hover:text-background sm:px-4 sm:text-sm"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+          <SlidingNav
+            links={links}
+            resolveUrl={resolveUrl}
+            handleClick={handleClick}
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+            mounted={mounted}
+          />
         )}
       </nav>
     </header>
+  )
+}
+
+/* ── Sliding pill nav ─────────────────────────────────────────────────────── */
+
+type SlidingNavProps = {
+  links: { label: string; url: string }[]
+  resolveUrl: (url: string) => string
+  handleClick: (e: React.MouseEvent<HTMLAnchorElement>, url: string, index: number) => void
+  activeIndex: number
+  setActiveIndex: (i: number) => void
+  mounted: boolean
+}
+
+function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveIndex, mounted }: SlidingNavProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
+  const [pill, setPill] = useState({ left: 0, width: 0, ready: false })
+
+  // Measure the active link and update the pill position
+  const updatePill = useCallback(() => {
+    const link = linkRefs.current[activeIndex]
+    const container = containerRef.current
+    if (!link || !container) return
+
+    const containerRect = container.getBoundingClientRect()
+    const linkRect = link.getBoundingClientRect()
+
+    setPill({
+      left: linkRect.left - containerRect.left,
+      width: linkRect.width,
+      ready: true,
+    })
+  }, [activeIndex])
+
+  // Recalculate pill on active change + resize
+  useEffect(() => {
+    updatePill()
+
+    const ro = new ResizeObserver(updatePill)
+    if (containerRef.current) ro.observe(containerRef.current)
+    return () => ro.disconnect()
+  }, [updatePill])
+
+  // Scroll spy — watch which section is in the viewport
+  useEffect(() => {
+    if (!mounted) return
+
+    const sectionIds = links
+      .map((l) => l.url)
+      .filter((u) => u.startsWith('#'))
+      .map((u) => u.slice(1))
+
+    const elements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[]
+
+    if (elements.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const idx = sectionIds.indexOf(entry.target.id)
+            if (idx !== -1) setActiveIndex(idx)
+          }
+        }
+      },
+      { rootMargin: '-20% 0px -55% 0px' },
+    )
+
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [mounted, links, setActiveIndex])
+
+  return (
+    <div ref={containerRef} className="relative flex items-center gap-0.5 sm:gap-1">
+      {/* Sliding pill indicator */}
+      <div
+        className="absolute top-0 h-full rounded-full bg-white/[0.12]"
+        style={{
+          left: pill.left,
+          width: pill.width,
+          transition: pill.ready
+            ? 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+            : 'none',
+          opacity: pill.ready ? 1 : 0,
+        }}
+      />
+
+      {links.map((link, i) => (
+        <Link
+          key={i}
+          ref={(el) => { linkRefs.current[i] = el }}
+          href={resolveUrl(link.url)}
+          onClick={(e) => handleClick(e, link.url, i)}
+          className={`relative z-10 rounded-full px-3 py-1.5 text-xs transition-colors duration-200 sm:px-4 sm:text-sm ${
+            i === activeIndex
+              ? 'text-background'
+              : 'text-background/50 hover:text-background/75'
+          }`}
+        >
+          {link.label}
+        </Link>
+      ))}
+    </div>
   )
 }
