@@ -8,6 +8,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.neon.tech',
       },
+      {
+        protocol: 'https',
+        hostname: '**.public.blob.vercel-storage.com',
+      },
     ],
   },
 }
