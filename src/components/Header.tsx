@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -11,9 +12,12 @@ type HeaderProps = {
 
 export function Header({ siteName = 'Matthew O\'Connor', links = [], variant = 'fixed' }: HeaderProps) {
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   // Layout header hides on homepage (homepage renders its own sticky variant)
-  if (variant === 'fixed' && pathname === '/') return null
+  // Also hide before hydration to prevent flash on homepage
+  if (variant === 'fixed' && (!mounted || pathname === '/')) return null
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, url: string) => {
     if (url.startsWith('#') && pathname === '/') {
