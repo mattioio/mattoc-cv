@@ -49,7 +49,7 @@ export function Header({ siteName = 'Matthew O\'Connor', links = [], variant = '
       <nav
         className={
           isSticky
-            ? 'mx-auto flex h-12 items-center justify-center rounded-full bg-foreground px-1.5 shadow-lg sm:h-14'
+            ? 'mx-auto flex h-12 items-center justify-center rounded-full bg-foreground px-3 shadow-lg sm:h-14'
             : 'flex h-12 items-center justify-center rounded-full bg-foreground px-5 shadow-lg sm:h-14'
         }
         style={
