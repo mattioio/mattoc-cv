@@ -1,58 +1,148 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-  }
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Syne', system-ui, sans-serif;
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+  --color-background: #ffffff;
+  --color-foreground: #111111;
+  --color-muted: #f5f5f5;
+  --color-muted-foreground: #6b6b6b;
+  --color-border: #e5e5e5;
+  --color-accent: #111111;
+  --color-accent-foreground: #ffffff;
+
+  --radius: 0.375rem;
+}
+
+@keyframes nav-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--color-border);
   }
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
   }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out both;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out both;
+}
+
+.animate-drop-in {
+  animation: drop-in 0.4s ease-out both;
+}
+
+/* Timeline scroll reveal */
+.timeline-item {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.timeline-item .timeline-dot {
+  transform: scale(0);
+  transition: transform 0.3s ease-out 0.15s;
+}
+
+.timeline-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-visible .timeline-dot {
+  transform: scale(1);
+}
+
+/* Lexical rich text paragraph spacing */
+.prose p + p {
+  margin-top: 1.25em;
+}
+
+/* Lexical rich text list overrides */
+.prose ul.list-bullet {
+  list-style-type: disc;
+  padding-left: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.prose ol.list-number {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.prose .list-bullet li,
+.prose .list-number li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+/* Inline code styling */
+.prose code:not(pre code) {
+  background-color: var(--color-muted);
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* Full-bleed: break out of max-width parent */
+.full-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
 }

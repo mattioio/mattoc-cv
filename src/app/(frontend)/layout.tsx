@@ -1,36 +1,36 @@
 import type { Metadata } from 'next'
-import { DM_Sans, Lora } from 'next/font/google'
+import { Syne, Plus_Jakarta_Sans } from 'next/font/google'
 import '../globals.css'
-import { Header } from '@/components/Header'
+import { HeaderWrapper } from '@/components/HeaderWrapper'
 import { Footer } from '@/components/Footer'
 
-const dmSans = DM_Sans({
+const syne = Syne({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
 })
 
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['normal', 'italic'],
-  variable: '--font-display',
-  display: 'swap',
-})
-
 export const metadata: Metadata = {
   title: {
-    template: '%s | CMS Template',
-    default: 'CMS Template',
+    template: '%s | Matthew O\'Connor',
+    default: 'Matthew O\'Connor - Product Designer',
   },
-  description: 'A Payload CMS template for blogs and property websites',
+  description: 'Digital product designer based in London',
 }
 
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${dmSans.variable} ${lora.variable} ${dmSans.className} flex min-h-screen flex-col`}>
-        <Header />
+      <body
+        className={`${syne.variable} ${plusJakarta.variable} ${plusJakarta.className} flex min-h-screen flex-col`}
+      >
+        <HeaderWrapper />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>

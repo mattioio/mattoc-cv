@@ -8,7 +8,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Categories } from './collections/Categories'
 import { Posts } from './collections/Posts'
-import { Properties } from './collections/Properties'
+import { WorkHistory } from './collections/WorkHistory'
 import { SiteSettings } from './globals/SiteSettings'
 import { Navigation } from './globals/Navigation'
 
@@ -22,7 +22,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Categories, Posts, Properties],
+  collections: [Users, Media, Categories, Posts, WorkHistory],
   globals: [SiteSettings, Navigation],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

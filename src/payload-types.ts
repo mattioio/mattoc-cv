@@ -16,7 +16,7 @@ export interface Config {
     media: Media
     categories: Category
     posts: Post
-    properties: Property
+    'work-history': WorkHistory
   }
   globals: {
     'site-settings': SiteSettings
@@ -63,15 +63,45 @@ export interface Category {
   createdAt: string
 }
 
+export type CaseStudySectionBlock = {
+  blockType: 'case-study-section'
+  variant: 'default' | 'standout'
+  heading?: string | null
+  body?: SerializedEditorState | null
+  image?: (string | null) | Media
+  imagePosition?: 'below' | 'right' | 'left' | null
+  imageCaption?: string | null
+  carousel?: {
+    image: string | Media
+    caption?: string | null
+    id?: string | null
+  }[] | null
+  stats?: {
+    value: string
+    label: string
+    id?: string | null
+  }[] | null
+  id?: string | null
+}
+
+export type LayoutBlock = CaseStudySectionBlock
+
 export interface Post {
   id: string
   title: string
+  subtitle?: string | null
   slug: string
   status: 'draft' | 'published'
   publishedAt?: string | null
   excerpt?: string | null
+  readTime?: string | null
+  postType?: ('case-study' | 'article' | 'press') | null
+  externalUrl?: string | null
   featuredImage?: (string | null) | Media
-  content: SerializedEditorState
+  heroImages?: { image: string | Media; id?: string | null }[] | null
+  images?: { image: string | Media; caption?: string | null; id?: string | null }[] | null
+  layout?: LayoutBlock[] | null
+  content?: SerializedEditorState | null
   categories?: (string | Category)[] | null
   author?: (string | null) | User
   updatedAt: string
@@ -79,36 +109,36 @@ export interface Post {
   _status?: ('draft' | 'published') | null
 }
 
-export interface Property {
+export interface WorkHistory {
   id: string
-  title: string
-  slug: string
+  company: string
+  jobTitle: string
+  startDate: string
+  endDate?: string | null
+  description: string
+  companyUrl?: string | null
+  sortOrder: number
   status: 'draft' | 'published'
-  propertyType: 'sale' | 'rent'
-  price: number
-  location: string
-  bedrooms?: number | null
-  bathrooms?: number | null
-  images?: {
-    image: string | Media
-    id?: string | null
-  }[]
-  description: SerializedEditorState
   updatedAt: string
   createdAt: string
-  _status?: ('draft' | 'published') | null
 }
 
 export interface SiteSettings {
   id: string
   siteName: string
   siteDescription?: string | null
+  introText: string
+  contactEmail: string
+  contactPrompt?: string | null
+  cvDownloadUrl?: string | null
+  portfolioDownloadUrl?: string | null
   logo?: (string | null) | Media
   socialLinks?: {
     twitter?: string | null
     instagram?: string | null
-    facebook?: string | null
     linkedin?: string | null
+    dribbble?: string | null
+    github?: string | null
   }
   updatedAt: string
   createdAt: string

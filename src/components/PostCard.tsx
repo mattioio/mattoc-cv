@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Post, Category } from '@/payload-types'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 type Props = {
@@ -16,50 +15,58 @@ export function PostCard({ post }: Props) {
     ? post.categories.filter((c): c is Category => typeof c === 'object')
     : []
 
-  const publishedDate = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
-    : null
+  const href = post.externalUrl || `/case-studies/${post.slug}`
+  const isExternal = !!post.externalUrl
 
-  return (
-    <Link href={`/blog/${post.slug}`} className="group block">
-      <Card className="h-full overflow-hidden transition-shadow hover:shadow-md">
-        {featuredImage?.url && (
-          <div className="relative aspect-video overflow-hidden">
-            <Image
-              src={featuredImage.url}
-              alt={featuredImage.alt || post.title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
+  const inner = (
+    <div className="group">
+      {featuredImage?.url && (
+        <div className="relative mb-4 aspect-[4/3] overflow-hidden bg-muted">
+          <Image
+            src={featuredImage.url}
+            alt={featuredImage.alt || post.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+      )}
+      {categories.length > 0 && (
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {categories.map((cat) => (
+            <Badge key={cat.id} variant="secondary">
+              {cat.name}
+            </Badge>
+          ))}
+        </div>
+      )}
+      <h3
+        className="text-lg font-semibold leading-snug"
+        style={{ fontFamily: 'var(--font-display)' }}
+      >
+        {post.title}
+      </h3>
+      {post.excerpt && (
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+          {post.excerpt}
+        </p>
+      )}
+      <div className="mt-3 flex items-center gap-3">
+        {post.readTime && (
+          <span className="text-xs text-muted-foreground">{post.readTime}</span>
         )}
-        <CardHeader className="pb-2">
-          {categories.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {categories.map((cat) => (
-                <Badge key={cat.id} variant="secondary">
-                  {cat.name}
-                </Badge>
-              ))}
-            </div>
-          )}
-          <CardTitle className="line-clamp-2 text-lg">{post.title}</CardTitle>
-        </CardHeader>
-        {post.excerpt && (
-          <CardContent className="pb-2">
-            <p className="line-clamp-3 text-sm text-muted-foreground">{post.excerpt}</p>
-          </CardContent>
-        )}
-        {publishedDate && (
-          <CardFooter>
-            <p className="text-xs text-muted-foreground">{publishedDate}</p>
-          </CardFooter>
-        )}
-      </Card>
-    </Link>
+        <span className="text-sm font-medium text-foreground">Read &rarr;</span>
+      </div>
+    </div>
   )
+
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer">
+        {inner}
+      </a>
+    )
+  }
+
+  return <Link href={href}>{inner}</Link>
 }

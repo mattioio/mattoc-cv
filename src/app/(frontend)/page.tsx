@@ -1,235 +1,293 @@
-import Link from 'next/link'
+import type { Metadata } from 'next'
+import Image from 'next/image'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { PostCard } from '@/components/PostCard'
-import { PropertyCard } from '@/components/PropertyCard'
-import { Button } from '@/components/ui/button'
+import { WorkHistoryItem } from '@/components/WorkHistoryItem'
+import { AnimatedTimeline } from '@/components/AnimatedTimeline'
+import { WritingCard } from '@/components/WritingCard'
+import { Header } from '@/components/Header'
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: 'Matthew O\'Connor — Product Designer',
+  description:
+    'Digital product designer based in London. Turning complexity into clarity through design thinking, user research, and scalable design systems.',
+  openGraph: {
+    title: 'Matthew O\'Connor — Product Designer',
+    description:
+      'Digital product designer based in London. Turning complexity into clarity.',
+    type: 'website',
+  },
+}
 
 export default async function HomePage() {
   const payload = await getPayload({ config: configPromise })
 
-  const [siteSettings, posts, properties, propertiesCount, postsCount] = await Promise.all([
+  const [siteSettings, navigation, workHistory, posts] = await Promise.all([
     payload.findGlobal({ slug: 'site-settings' }).catch(() => null),
+    payload.findGlobal({ slug: 'navigation' }).catch(() => null),
+    payload
+      .find({
+        collection: 'work-history',
+        where: { status: { equals: 'published' } },
+        sort: 'sortOrder',
+        limit: 20,
+      })
+      .catch(() => ({ docs: [] })),
     payload
       .find({
         collection: 'posts',
         where: { status: { equals: 'published' } },
-        limit: 3,
         sort: '-publishedAt',
+        limit: 50,
         depth: 2,
       })
       .catch(() => ({ docs: [] })),
-    payload
-      .find({
-        collection: 'properties',
-        where: { status: { equals: 'published' } },
-        limit: 3,
-        depth: 2,
-      })
-      .catch(() => ({ docs: [] })),
-    payload
-      .count({ collection: 'properties', where: { status: { equals: 'published' } } })
-      .catch(() => ({ totalDocs: 0 })),
-    payload
-      .count({ collection: 'posts', where: { status: { equals: 'published' } } })
-      .catch(() => ({ totalDocs: 0 })),
   ])
 
-  const siteName = siteSettings?.siteName || 'My Site'
-  const siteDescription =
-    siteSettings?.siteDescription ||
-    'Discover beautiful homes and inspiring stories about the art of living well.'
+  const siteName = siteSettings?.siteName || 'Matthew O\'Connor'
+  const navLinks = (navigation?.links || []) as { label: string; url: string }[]
+  const introText =
+    siteSettings?.introText ||
+    'Digital product designer based in London.'
+  const contactEmail = siteSettings?.contactEmail || ''
+  const contactPrompt = siteSettings?.contactPrompt || ''
+  const cvUrl = siteSettings?.cvDownloadUrl || ''
+  const portfolioUrl = siteSettings?.portfolioDownloadUrl || ''
 
-  // Pull hero image from the first published property
-  const firstProperty = properties.docs[0]
-  const firstImage = firstProperty?.images?.[0]?.image
-  const heroFilename = typeof firstImage === 'object' && firstImage !== null ? (firstImage as { filename?: string }).filename : null
-  const heroImageUrl = heroFilename ? `/api/media/file/${heroFilename}` : null
-
-  const propertyCount = propertiesCount.totalDocs
-  const postCount = postsCount.totalDocs
+  const caseStudies = posts.docs.filter((p) => p.postType === 'case-study' || (!p.postType && !p.externalUrl))
+  const externalPosts = posts.docs.filter((p) => p.postType === 'article' || p.postType === 'press' || (!p.postType && !!p.externalUrl))
 
   return (
     <div>
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="relative flex min-h-[88vh] overflow-hidden">
-
-        {/* Left: dark editorial panel */}
-        <div
-          className="relative z-10 flex w-full flex-col justify-between px-8 py-14 sm:w-[56%] lg:px-16 xl:px-20"
-          style={{ background: '#0C0C0A' }}
-        >
-          {/* Eyebrow */}
-          <div className="flex items-center gap-3">
-            <span className="block h-px w-8" style={{ background: '#B8965A' }} />
-            <span
-              className="text-xs font-medium uppercase tracking-[0.3em]"
-              style={{ color: '#B8965A' }}
-            >
-              Homes &amp; Stories
-            </span>
-          </div>
-
-          {/* Headline + body + CTA */}
-          <div className="my-auto py-10">
-            <h1
-              className="mb-7 leading-[1.04] tracking-tight"
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(3.2rem, 6.5vw, 5.5rem)',
-                fontWeight: 300,
-                color: '#F4EFE6',
-              }}
-            >
-              {siteName.split(' ').length > 1 ? (
-                <>
-                  {siteName.split(' ').slice(0, -1).join(' ')}&nbsp;
-                  <em style={{ fontStyle: 'italic' }}>{siteName.split(' ').slice(-1)}</em>
-                </>
-              ) : (
-                <em style={{ fontStyle: 'italic' }}>{siteName}</em>
-              )}
-            </h1>
-
-            <p
-              className="mb-10 max-w-sm text-base leading-relaxed"
-              style={{ color: '#8A8778', fontFamily: 'var(--font-sans)' }}
-            >
-              {siteDescription}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-5">
-              <Link
-                href="/properties"
-                className="inline-flex items-center px-7 py-3.5 text-sm font-medium transition-opacity hover:opacity-85"
-                style={{
-                  background: '#B8965A',
-                  color: '#0C0C0A',
-                  fontFamily: 'var(--font-sans)',
-                  letterSpacing: '0.02em',
-                }}
-              >
-                Explore Properties
-              </Link>
-              <Link
-                href="/blog"
-                className="group flex items-center gap-2 text-sm font-medium transition-colors"
-                style={{ color: '#F4EFE6', fontFamily: 'var(--font-sans)' }}
-              >
-                Read the Blog
-                <span
-                  className="transition-transform group-hover:translate-x-1"
-                  style={{ color: '#B8965A' }}
-                >
-                  →
-                </span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Bottom stat strip */}
-          <div
-            className="flex items-center gap-8 border-t pt-6"
-            style={{ borderColor: '#1E1E1C' }}
-          >
-            {propertyCount > 0 && (
-              <div>
-                <div
-                  className="text-3xl font-light leading-none"
-                  style={{ fontFamily: 'var(--font-display)', color: '#F4EFE6' }}
-                >
-                  {propertyCount}
-                </div>
-                <div
-                  className="mt-1 text-[10px] uppercase tracking-[0.2em]"
-                  style={{ color: '#8A8778' }}
-                >
-                  Properties
-                </div>
-              </div>
-            )}
-            {propertyCount > 0 && postCount > 0 && (
-              <div className="h-8 w-px" style={{ background: '#1E1E1C' }} />
-            )}
-            {postCount > 0 && (
-              <div>
-                <div
-                  className="text-3xl font-light leading-none"
-                  style={{ fontFamily: 'var(--font-display)', color: '#F4EFE6' }}
-                >
-                  {postCount}
-                </div>
-                <div
-                  className="mt-1 text-[10px] uppercase tracking-[0.2em]"
-                  style={{ color: '#8A8778' }}
-                >
-                  Articles
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right: full-bleed image */}
-        <div className="absolute inset-y-0 right-0 hidden w-[44%] md:block">
-          {heroImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={heroImageUrl}
-              alt="Featured property"
-              className="h-full w-full object-cover"
+      {/* Hero / Intro */}
+      <section className="mx-auto max-w-4xl px-6 pb-10 pt-16 text-center sm:pt-20">
+        <div className="animate-fade-in">
+          <div className="mx-auto mb-8 w-40 sm:w-48">
+            <Image
+              src="/matthew-face.svg"
+              alt="Matthew O'Connor"
+              width={760}
+              height={685}
+              priority
+              className="h-auto w-full"
             />
-          ) : (
-            <div className="h-full w-full" style={{ background: '#1A1A18' }} />
-          )}
-          {/* Blend edge into dark panel */}
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 w-20"
-            style={{ background: 'linear-gradient(to right, #0C0C0A, transparent)' }}
-          />
+          </div>
+          <h1
+            className="mx-auto max-w-3xl text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Turning complexity into clarity
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-foreground/60">
+            {introText}
+          </p>
         </div>
-
       </section>
 
-      {/* Latest Posts */}
-      {posts.docs.length > 0 && (
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-3xl font-bold">Latest Posts</h2>
-              <Link href="/blog">
-                <Button variant="ghost">View all &rarr;</Button>
-              </Link>
+      {/* Sticky nav — appears after hero, sticks on scroll */}
+      <Header siteName={siteName} links={[{ label: 'Portfolio & CV', url: '#downloads' }, ...navLinks]} variant="sticky" />
+
+      {/* Portfolio & CV callout card */}
+      {(portfolioUrl || cvUrl) && (() => {
+        const previewImg = caseStudies[0]?.heroImages?.[0]?.image
+        const img = previewImg && typeof previewImg === 'object' ? previewImg : null
+        return (
+          <section id="downloads" className="mx-auto max-w-6xl px-6 pb-20 pt-8">
+            <div className="grid overflow-hidden rounded-2xl bg-foreground sm:grid-cols-[1fr_2fr]">
+              {/* Image */}
+              <div className="relative min-h-[200px] sm:min-h-[260px]">
+                {img?.url ? (
+                  <Image
+                    src={img.url}
+                    alt="Portfolio preview"
+                    fill
+                    sizes="(max-width: 640px) 100vw, 40vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-white/5" />
+                )}
+              </div>
+
+              {/* Content */}
+              <div className="flex flex-col justify-center p-8 sm:p-10">
+                <p className="text-[10px] font-medium uppercase tracking-widest text-white/35">
+                  Downloads
+                </p>
+                <h2
+                  className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  Grab my portfolio &amp; CV
+                </h2>
+                <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/45">
+                  Case studies, process work, and a full career overview — ready to download.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {portfolioUrl && (
+                    <a
+                      href={portfolioUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/btn inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-foreground transition-opacity hover:opacity-85"
+                    >
+                      Portfolio
+                      <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                      </svg>
+                    </a>
+                  )}
+                  {cvUrl && (
+                    <a
+                      href={cvUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group/btn inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white transition-all hover:border-white/30"
+                    >
+                      Curriculum Vitae
+                      <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {posts.docs.map((post) => (
-                <PostCard key={post.id} post={post} />
+          </section>
+        )
+      })()}
+
+      {/* Work History */}
+      {workHistory.docs.length > 0 && (
+        <section id="work" className="full-bleed bg-muted/50">
+          <div className="mx-auto max-w-3xl px-6 py-20">
+            <h2
+              className="mb-12 text-2xl font-bold tracking-tight sm:text-3xl"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              Experience
+            </h2>
+            <AnimatedTimeline>
+              {workHistory.docs.map((item, i) => (
+                <WorkHistoryItem
+                  key={item.id}
+                  company={item.company}
+                  jobTitle={item.jobTitle}
+                  startDate={item.startDate}
+                  endDate={item.endDate}
+                  description={item.description}
+                  companyUrl={item.companyUrl}
+                  index={i}
+                />
               ))}
-            </div>
+            </AnimatedTimeline>
           </div>
         </section>
       )}
 
-      {/* Latest Properties */}
-      {properties.docs.length > 0 && (
-        <section className="bg-muted/50 py-16">
-          <div className="container mx-auto px-4">
-            <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-3xl font-bold">Latest Properties</h2>
-              <Link href="/properties">
-                <Button variant="ghost">View all &rarr;</Button>
-              </Link>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {properties.docs.map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
-            </div>
+      {/* Case Studies */}
+      {caseStudies.length > 0 && (
+        <section id="case-studies" className="mx-auto max-w-6xl px-6 py-20">
+          <h2
+            className="mb-12 text-2xl font-bold tracking-tight sm:text-3xl"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Case Studies
+          </h2>
+          <div className="space-y-12">
+            {caseStudies.map((post, i) => (
+              <div key={post.id}>
+                <WritingCard post={post} index={i} />
+              </div>
+            ))}
           </div>
         </section>
       )}
+
+      {/* Featured In */}
+      {externalPosts.length > 0 && (
+        <section id="featured" className="mx-auto max-w-6xl px-6 py-20">
+          <h2
+            className="mb-12 text-2xl font-bold tracking-tight sm:text-3xl"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            Featured In
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {externalPosts.map((post) => {
+              const img =
+                post.featuredImage && typeof post.featuredImage === 'object'
+                  ? post.featuredImage
+                  : null
+              return (
+                <a
+                  key={post.id}
+                  href={post.externalUrl || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group overflow-hidden rounded-xl border border-border transition-colors hover:bg-muted/50"
+                >
+                  {img?.url && (
+                    <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+                      <Image
+                        src={img.url}
+                        alt={img.alt || post.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground/50">
+                      {post.postType === 'press' ? 'Interview' : 'Article'}
+                    </p>
+                    <h3
+                      className="mt-2 text-lg font-bold tracking-tight"
+                      style={{ fontFamily: 'var(--font-display)' }}
+                    >
+                      {post.title}
+                    </h3>
+                    {post.excerpt && (
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                        {post.excerpt}
+                      </p>
+                    )}
+                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground transition-all group-hover:gap-3">
+                      Read article
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                      </svg>
+                    </span>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Contact */}
+      <section id="contact" className="mx-auto max-w-6xl px-6 py-20">
+        <div className="animate-fade-in max-w-lg">
+          {contactPrompt && (
+            <p className="mb-6 text-base leading-relaxed text-foreground/80">
+              {contactPrompt}
+            </p>
+          )}
+          {contactEmail && (
+            <a
+              href={`mailto:${contactEmail}`}
+              className="text-2xl font-semibold tracking-tight transition-opacity hover:opacity-70 sm:text-3xl"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              Get in touch &rarr;
+            </a>
+          )}
+        </div>
+      </section>
     </div>
   )
 }
