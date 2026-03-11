@@ -171,8 +171,8 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
 
   // Suppress scroll spy while a click-triggered smooth scroll is in progress
   const scrollLockRef = useRef(false)
-  const scrollLockTimer = useRef<ReturnType<typeof setTimeout>>()
-  const checkRef = useRef<() => void>()
+  const scrollLockTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const checkRef = useRef<() => void>(undefined)
 
   const lockScrollSpy = useCallback(() => {
     scrollLockRef.current = true
