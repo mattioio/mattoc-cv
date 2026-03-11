@@ -56,7 +56,7 @@ export function Header({ siteName = 'Matthew O\'Connor', links = [], variant = '
         setInverted(false)
       } else {
         clearTimeout(invertTimer)
-        invertTimer = window.setTimeout(() => setInverted(true), 150)
+        invertTimer = window.setTimeout(() => setInverted(true), 50)
       }
     }
 
@@ -172,12 +172,15 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
   // Suppress scroll spy while a click-triggered smooth scroll is in progress
   const scrollLockRef = useRef(false)
   const scrollLockTimer = useRef<ReturnType<typeof setTimeout>>()
+  const checkRef = useRef<() => void>()
 
   const lockScrollSpy = useCallback(() => {
     scrollLockRef.current = true
     clearTimeout(scrollLockTimer.current)
     scrollLockTimer.current = setTimeout(() => {
       scrollLockRef.current = false
+      // Re-run scroll spy after lock releases so pill updates to final position
+      checkRef.current?.()
     }, 900)
   }, [])
 
@@ -215,7 +218,7 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
     return () => ro.disconnect()
   }, [updatePill])
 
-  // Scroll spy — watch which section is in the viewport
+  // Scroll spy — pick the section whose top is closest to 30% down the viewport
   useEffect(() => {
     if (!mounted) return
 
@@ -230,23 +233,28 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
 
     if (elements.length === 0) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // Ignore observations while smooth-scrolling from a click
-        if (scrollLockRef.current) return
+    const check = () => {
+      if (scrollLockRef.current) return
 
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const idx = sectionIds.indexOf(entry.target.id)
-            if (idx !== -1) setActiveIndex(idx)
-          }
+      // Reference line at 40% down the viewport
+      const target = window.innerHeight * 0.4
+      // Pick the last section whose top has scrolled above the reference line
+      let best = 0
+      for (let i = 0; i < elements.length; i++) {
+        if (elements[i].getBoundingClientRect().top <= target) {
+          best = i
         }
-      },
-      { rootMargin: '-20% 0px -55% 0px' },
-    )
+      }
 
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+      setActiveIndex(best)
+    }
+
+    checkRef.current = check
+    window.addEventListener('scroll', check, { passive: true })
+    check()
+    return () => {
+      window.removeEventListener('scroll', check)
+    }
   }, [mounted, links, setActiveIndex])
 
   return (

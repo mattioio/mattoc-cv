@@ -90,74 +90,52 @@ export default async function HomePage() {
       <Header siteName={siteName} links={[{ label: 'Portfolio & CV', url: '#downloads' }, ...navLinks]} variant="sticky" />
 
       {/* Portfolio & CV callout card */}
-      {(portfolioUrl || cvUrl) && (() => {
-        const previewImg = caseStudies[0]?.heroImages?.[0]?.image
-        const img = previewImg && typeof previewImg === 'object' ? previewImg : null
-        return (
-          <section id="downloads" className="mx-auto max-w-6xl px-6 pb-20 pt-8">
-            <div className="grid overflow-hidden rounded-2xl bg-foreground sm:grid-cols-[1fr_2fr]">
-              {/* Image */}
-              <div className="relative min-h-[200px] sm:min-h-[260px]">
-                {img?.url ? (
-                  <Image
-                    src={img.url}
-                    alt="Portfolio preview"
-                    fill
-                    sizes="(max-width: 640px) 100vw, 40vw"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-white/5" />
-                )}
-              </div>
-
-              {/* Content */}
-              <div className="flex flex-col justify-center p-8 sm:p-10">
-                <p className="text-[10px] font-medium uppercase tracking-widest text-white/35">
-                  Downloads
-                </p>
-                <h2
-                  className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl"
-                  style={{ fontFamily: 'var(--font-display)' }}
+      {(portfolioUrl || cvUrl) && (
+        <section id="downloads" className="mx-auto max-w-6xl px-6 pb-16 pt-8">
+          <div className="rounded-2xl bg-muted px-8 py-12 text-center sm:px-16 sm:py-16">
+            <svg className="mx-auto mb-5 h-8 w-8 text-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+            </svg>
+            <h2
+              className="mx-auto mt-3 max-w-md text-2xl font-bold tracking-tight sm:text-3xl"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              Grab my portfolio &amp; CV
+            </h2>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Case studies, process work, and a full career overview — ready to download.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              {portfolioUrl && (
+                <a
+                  href={portfolioUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/btn inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-85"
                 >
-                  Grab my portfolio &amp; CV
-                </h2>
-                <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/45">
-                  Case studies, process work, and a full career overview — ready to download.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  {portfolioUrl && (
-                    <a
-                      href={portfolioUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/btn inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-foreground transition-opacity hover:opacity-85"
-                    >
-                      Portfolio
-                      <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </a>
-                  )}
-                  {cvUrl && (
-                    <a
-                      href={cvUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group/btn inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-2.5 text-sm font-medium text-white transition-all hover:border-white/30"
-                    >
-                      Curriculum Vitae
-                      <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </a>
-                  )}
-                </div>
-              </div>
+                  Portfolio
+                  <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                  </svg>
+                </a>
+              )}
+              {cvUrl && (
+                <a
+                  href={cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/btn inline-flex items-center gap-2 rounded-full border border-foreground/15 px-6 py-3 text-sm font-medium text-foreground transition-colors hover:bg-foreground/5"
+                >
+                  Curriculum Vitae
+                  <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                  </svg>
+                </a>
+              )}
             </div>
-          </section>
-        )
-      })()}
+          </div>
+        </section>
+      )}
 
       {/* Work History */}
       {workHistory.docs.length > 0 && (

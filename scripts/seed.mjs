@@ -20,6 +20,15 @@ async function login() {
 
 // ─── API helpers ─────────────────────────────────────────────────────────────
 async function createCategory(token, name, slug) {
+  // Check if category already exists
+  const check = await fetch(`${BASE}/api/categories?where[slug][equals]=${slug}`, {
+    headers: { Authorization: `JWT ${token}` },
+  });
+  const existing = await check.json();
+  if (existing.docs?.length > 0) {
+    console.log(`  ✓ Category exists: ${name}`);
+    return existing.docs[0].id;
+  }
   const res = await fetch(`${BASE}/api/categories`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
@@ -32,6 +41,22 @@ async function createCategory(token, name, slug) {
 }
 
 async function createWorkHistory(token, entry) {
+  // Check if entry already exists by company + jobTitle
+  const check = await fetch(`${BASE}/api/work-history?where[company][equals]=${encodeURIComponent(entry.company)}&where[jobTitle][equals]=${encodeURIComponent(entry.jobTitle)}`, {
+    headers: { Authorization: `JWT ${token}` },
+  });
+  const existing = await check.json();
+  if (existing.docs?.length > 0) {
+    // Update existing
+    const id = existing.docs[0].id;
+    await fetch(`${BASE}/api/work-history/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
+      body: JSON.stringify(entry),
+    });
+    console.log(`  ✓ Updated: ${entry.company} — ${entry.jobTitle}`);
+    return id;
+  }
   const res = await fetch(`${BASE}/api/work-history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
@@ -44,6 +69,22 @@ async function createWorkHistory(token, entry) {
 }
 
 async function createPost(token, post) {
+  // Check if post already exists by slug
+  const check = await fetch(`${BASE}/api/posts?where[slug][equals]=${encodeURIComponent(post.slug)}`, {
+    headers: { Authorization: `JWT ${token}` },
+  });
+  const existing = await check.json();
+  if (existing.docs?.length > 0) {
+    // Update existing
+    const id = existing.docs[0].id;
+    await fetch(`${BASE}/api/posts/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
+      body: JSON.stringify(post),
+    });
+    console.log(`  ✓ Updated: ${post.title}`);
+    return id;
+  }
   const res = await fetch(`${BASE}/api/posts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `JWT ${token}` },
@@ -277,7 +318,7 @@ async function main() {
       title: 'Design at Zego: Planning for scale',
       slug: 'design-at-zego-planning-for-scale',
       excerpt:
-        'Transitioning from Sketch to Figma allowed streamlined process, tackled design debt, and improved collaboration with a scalable cloud-based design system.',
+        'How I moved Zego from Sketch to Figma to reduce design debt and build a scalable design system for the growing team.',
       readTime: '5 min',
       externalUrl: 'https://api.zego.com/blog/design-at-zego-planning-for-scale/',
       content: lexicalDoc(
@@ -289,10 +330,10 @@ async function main() {
       publishedAt: new Date('2020-03-01').toISOString(),
     },
     {
-      title: 'Flypay: The Pivot to Flyt',
+      title: 'My design process, featured on Marvel',
       slug: 'flypay-the-pivot-to-flyt',
       excerpt:
-        'Flypay rebranded to Flyt, focusing on ePOS integration for hospitality transactions using Sketch and Marvel.',
+        'I was interviewed by Marvel App about how I approached product design at Flypay, from prototyping to shipping.',
       readTime: '8 min',
       externalUrl: 'https://marvelapp.com/blog/flypay-pivot-flyt/',
       content: lexicalDoc(
