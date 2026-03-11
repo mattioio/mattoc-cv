@@ -330,10 +330,10 @@ async function main() {
       publishedAt: new Date('2020-03-01').toISOString(),
     },
     {
-      title: 'My design process, featured on Marvel',
+      title: 'Talking Flypay with Marvel App',
       slug: 'flypay-the-pivot-to-flyt',
       excerpt:
-        'I was interviewed by Marvel App about how I approached product design at Flypay, from prototyping to shipping.',
+        'I was interviewed by Marvel App about life at Flypay, how the product evolved, and the eventual pivot to Flyt.',
       readTime: '8 min',
       externalUrl: 'https://marvelapp.com/blog/flypay-pivot-flyt/',
       content: lexicalDoc(
