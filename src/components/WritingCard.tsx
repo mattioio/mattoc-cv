@@ -46,10 +46,10 @@ export function WritingCard({ post, index = 0 }: Props) {
             {post.excerpt}
           </p>
         )}
-        <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground transition-all group-hover:gap-3">
+        <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground">
           View case study
-          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
           </svg>
         </span>
       </div>

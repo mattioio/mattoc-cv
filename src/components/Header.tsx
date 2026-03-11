@@ -218,7 +218,7 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
     return () => ro.disconnect()
   }, [updatePill])
 
-  // Scroll spy — pick the section whose top is closest to 30% down the viewport
+  // Scroll spy — activate the last section whose top has scrolled past the trigger line
   useEffect(() => {
     if (!mounted) return
 
@@ -233,15 +233,22 @@ function SlidingNav({ links, resolveUrl, handleClick, activeIndex, setActiveInde
 
     if (elements.length === 0) return
 
+    // For each section, find its first heading — that's the real content start.
+    // Fall back to the section element itself.
+    const anchors = elements.map((el) => {
+      const heading = el.querySelector('h2, h3')
+      return heading || el
+    })
+
     const check = () => {
       if (scrollLockRef.current) return
 
-      // Reference line at 40% down the viewport
-      const target = window.innerHeight * 0.4
-      // Pick the last section whose top has scrolled above the reference line
+      // Trigger line: 40% down the viewport.
+      // A section becomes active once its first heading crosses above this line.
+      const triggerLine = window.innerHeight * 0.4
       let best = 0
-      for (let i = 0; i < elements.length; i++) {
-        if (elements[i].getBoundingClientRect().top <= target) {
+      for (let i = 0; i < anchors.length; i++) {
+        if (anchors[i].getBoundingClientRect().top <= triggerLine) {
           best = i
         }
       }

@@ -103,7 +103,7 @@ export default async function HomePage() {
               Grab my portfolio &amp; CV
             </h2>
             <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              Case studies, process work, and a full career overview — ready to download.
+              Case studies, visual design and a full career overview, ready to download.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               {portfolioUrl && (
@@ -249,19 +249,36 @@ export default async function HomePage() {
 
       {/* Contact */}
       <section id="contact" className="mx-auto max-w-6xl px-6 py-20">
-        <div className="animate-fade-in max-w-lg">
-          {contactPrompt && (
-            <p className="mb-6 text-base leading-relaxed text-foreground/80">
-              {contactPrompt}
-            </p>
-          )}
+        <div className="animate-fade-in mx-auto max-w-2xl rounded-2xl bg-muted/50 px-8 py-16 text-center sm:px-16 sm:py-20">
+          {contactPrompt && (() => {
+            const match = contactPrompt.match(/^(.+?[?.])\s*(.*)$/)
+            const heading = match ? match[1] : contactPrompt
+            const body = match ? match[2] : ''
+            return (
+              <>
+                <h2
+                  className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  {heading}
+                </h2>
+                {body && (
+                  <p className="mb-6 text-base leading-relaxed text-foreground/60">
+                    {body}
+                  </p>
+                )}
+              </>
+            )
+          })()}
           {contactEmail && (
             <a
               href={`mailto:${contactEmail}`}
-              className="text-2xl font-semibold tracking-tight transition-opacity hover:opacity-70 sm:text-3xl"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="group/btn inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-85"
             >
-              Get in touch &rarr;
+              Get in touch
+              <svg className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+              </svg>
             </a>
           )}
         </div>

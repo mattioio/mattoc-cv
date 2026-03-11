@@ -242,8 +242,8 @@ function defineGiveMatch() {
         ),
         stats: [
           { value: '+40%', label: 'Increase in direct donations via profile pages' },
-          { value: '2X', label: 'More fundraisers started through charity URLs' },
-          { value: '85%', label: 'Of charities completed profile setup in first week' },
+          { value: '2X', label: 'More fundraisers started through charity pages' },
+          { value: '85%', label: 'Of charities completed profile setup in first month' },
         ],
       },
     ],
@@ -359,11 +359,6 @@ function defineOrchestrateIdentity() {
         body: lexicalDoc(
           'Through collaborative research and analysis of their current offering, we identified key areas for improvement in the onboarding process, ensuring a more seamless and user-friendly experience. By implementing clearer instructions, an overview screen, and refining the UI theming, we aimed to create a tool ready for market.',
         ),
-        stats: [
-          { value: '+35%', label: 'Improvement in onboarding completion rate' },
-          { value: '3X', label: 'Faster time to verified user status' },
-          { value: '12', label: 'Brands white-labeled within first quarter' },
-        ],
       },
     ],
   }

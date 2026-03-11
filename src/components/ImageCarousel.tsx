@@ -46,7 +46,7 @@ export function ImageCarousel({ images }: { images: CarouselImage[] }) {
   const activeCaption = images[activeIndex]?.caption
 
   return (
-    <div className="group relative">
+    <div className="group relative overflow-hidden rounded-lg">
       {/* Scroll container */}
       <div
         ref={scrollRef}
@@ -55,7 +55,7 @@ export function ImageCarousel({ images }: { images: CarouselImage[] }) {
       >
         {images.map((img, i) => (
           <div key={i} className="w-full flex-none snap-center">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-muted">
+            <div className="relative aspect-[16/10] bg-muted">
               <Image
                 src={img.url}
                 alt={img.alt}
@@ -70,14 +70,14 @@ export function ImageCarousel({ images }: { images: CarouselImage[] }) {
 
       {/* Footer bar: caption + counter + arrows */}
       {images.length > 1 && (
-        <div className="-mt-px flex items-center justify-between gap-4 rounded-b-lg bg-muted/80 px-4 py-3">
+        <div className="-mt-px flex flex-col gap-3 bg-muted/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           {/* Caption */}
-          <p className="min-h-[1.25rem] flex-1 text-sm text-foreground/60">
+          <p className="min-h-[1.25rem] text-sm text-foreground/60 sm:flex-1">
             {activeCaption || ''}
           </p>
 
           {/* Counter + arrows */}
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3 self-end sm:self-auto">
             <span className="text-sm tabular-nums text-foreground/40">
               {String(activeIndex + 1).padStart(2, '0')}/{String(images.length).padStart(2, '0')}
             </span>
@@ -109,7 +109,7 @@ export function ImageCarousel({ images }: { images: CarouselImage[] }) {
 
       {/* Single image caption (no counter) */}
       {images.length === 1 && activeCaption && (
-        <div className="-mt-px rounded-b-lg bg-muted/80 px-4 py-3">
+        <div className="-mt-px bg-muted/80 px-4 py-3">
           <p className="text-sm text-foreground/60">{activeCaption}</p>
         </div>
       )}

@@ -166,7 +166,7 @@ function StandoutSection({ block }: { block: CaseStudySectionBlock }) {
         {block.stats && block.stats.length > 0 && (
           <>
             <div className="mt-14 mb-14 h-px bg-background/10" />
-            <div className={`grid gap-10 ${gridCols}`}>
+            <div className={`grid gap-10 text-center ${gridCols}`}>
               {block.stats.map((stat, i) => (
                 <div key={stat.id || i}>
                   <p
@@ -175,7 +175,7 @@ function StandoutSection({ block }: { block: CaseStudySectionBlock }) {
                   >
                     {stat.value}
                   </p>
-                  <p className="mt-3 text-sm leading-relaxed text-background/50">{stat.label}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-background/70">{stat.label}</p>
                 </div>
               ))}
             </div>
