@@ -221,7 +221,7 @@ async function main() {
   }
 
   // Check if post exists
-  const checkRes = await fetch(`${BASE}/api/posts?where[slug][equals]=document-designer`, {
+  const checkRes = await fetch(`${BASE}/api/posts?where[slug][equals]=designing-without-design-tools`, {
     headers: { Authorization: `JWT ${token}` },
   })
   const checkData = await checkRes.json()
