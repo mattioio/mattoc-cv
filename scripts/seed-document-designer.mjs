@@ -206,7 +206,7 @@ async function main() {
     title: 'Designing without design tools',
     slug: 'designing-without-design-tools',
     subtitle: 'Designing a better way to create documents without design tools.',
-    excerpt: 'A product that turns structured inputs into finished, branded PDFs. Built entirely with AI.',
+    excerpt: 'What happens when you skip the design tools and build directly utilising AI.',
     readTime: '5 min',
     postType: 'case-study',
     categories: [caseStudyId],

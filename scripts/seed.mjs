@@ -318,7 +318,7 @@ async function main() {
       title: 'Designing without design tools',
       slug: 'designing-without-design-tools',
       excerpt:
-        'A product that turns structured inputs into finished, branded PDFs. Built entirely with AI.',
+        'What happens when you skip the design tools and build directly utilising AI.',
       readTime: '5 min',
       content: lexicalDoc(
         'Document designer turns structured inputs into finished PDFs. Users log in, pick a template, fill in a form, and get a complete document instantly.',
