@@ -315,6 +315,20 @@ async function main() {
       publishedAt: new Date('2022-06-01').toISOString(),
     },
     {
+      title: 'Designing without design tools',
+      slug: 'designing-without-design-tools',
+      excerpt:
+        'A product that turns structured inputs into finished, branded PDFs. Built entirely with AI.',
+      readTime: '5 min',
+      content: lexicalDoc(
+        'Document designer turns structured inputs into finished PDFs. Users log in, pick a template, fill in a form, and get a complete document instantly.',
+      ),
+      postType: 'case-study',
+      categories: [caseStudyId],
+      status: 'published',
+      publishedAt: new Date('2025-03-15').toISOString(),
+    },
+    {
       title: 'Design at Zego: Planning for scale',
       slug: 'design-at-zego-planning-for-scale',
       excerpt:
@@ -351,7 +365,7 @@ async function main() {
   }
 
   console.log(
-    '\n✅ Seed complete! 8 work history entries + 5 writing pieces + 3 categories + site settings.',
+    '\n✅ Seed complete! 8 work history entries + 6 writing pieces + 3 categories + site settings.',
   );
 }
 
