@@ -203,10 +203,10 @@ async function main() {
   ]
 
   const postData = {
-    title: 'Designing without design tools',
+    title: 'Doc Designer: A product built without design tools',
     slug: 'designing-without-design-tools',
     subtitle: 'Designing a better way to create documents without design tools.',
-    excerpt: 'What happens when you skip the design tools and build directly utilising AI.',
+    excerpt: 'What happens when you forgo your design process and design and build in code with AI.',
     readTime: '5 min',
     postType: 'case-study',
     categories: [caseStudyId],

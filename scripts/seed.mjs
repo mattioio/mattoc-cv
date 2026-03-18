@@ -267,7 +267,7 @@ async function main() {
   console.log('\nCreating writing...');
   const writingEntries = [
     {
-      title: 'A new home for charities on GiveMatch',
+      title: 'GiveMatch: A new home for charities',
       slug: 'givematch-a-new-home-for-charities',
       excerpt:
         'Designed a central, flexible hub for charities to tell their story, fundraise and accept direct giving.',
@@ -315,10 +315,10 @@ async function main() {
       publishedAt: new Date('2022-06-01').toISOString(),
     },
     {
-      title: 'Designing without design tools',
+      title: 'Doc Designer: A product built without design tools',
       slug: 'designing-without-design-tools',
       excerpt:
-        'What happens when you skip the design tools and build directly utilising AI.',
+        'What happens when you forgo your design process and design and build in code with AI.',
       readTime: '5 min',
       content: lexicalDoc(
         'Document designer turns structured inputs into finished PDFs. Users log in, pick a template, fill in a form, and get a complete document instantly.',
