@@ -171,7 +171,7 @@ async function main() {
       body: lexicalDoc(
         'Some sections behave intelligently. This behaviour is only possible because the system is code-driven, and for me it was only feasible to implement using AI to write that code.',
         '"Places I have worked" pages auto-generate a timeline slide. So the more work-history slides I add, the longer the timeline slide becomes.',
-        'Case study pages auto-number based on the number of templates.',
+        'Case study pages are automatically numbered based on the number of templates.',
         'Drawing mode was added towards the end of the build to add a human quality to the document. It features layers, groups, multiple line thicknesses and colours mapped to the theme.',
       ),
       carousel: [
