@@ -145,9 +145,9 @@ async function main() {
     contactPrompt:
       'Still have questions? Feel free to contact me if you have any questions about my history and experience.',
     cvDownloadUrl:
-      'https://drive.google.com/file/d/1ZjnOI0aTmgOEw8unDaT8N9F1PRGyASgF/view?usp=drive_link',
+      'https://drive.google.com/file/d/1YRFUTTrF63VK6F9qGUMX7JRnCbFmkAJU/view?usp=drive_link',
     portfolioDownloadUrl:
-      'https://drive.google.com/file/d/1EmEj5S3_gT5FxHQsvd8ocboA7nv4Yd60/view?usp=sharing',
+      'https://drive.google.com/file/d/10rzaZhCAiCzSVD7HvY6miG_rY83QnxEI/view?usp=drive_link',
     socialLinks: {
       linkedin: 'https://www.linkedin.com/in/matthew-o-connor-1147122b/',
     },
